@@ -1,0 +1,31 @@
+\documentclass{article}
+\newcommand{\DOCTITLE}{}
+\input{../libs/commands.tex}
+\input{../libs/packages.tex}
+\begin{document}
+  \makeHeader\
+  \newpage
+  \tableofcontents
+  \newpage
+  \section{Basic structure}
+  \begin{enumerate}
+    \item Define base coordinate system
+    \item Pick Blocks from dispenser 
+    \item Place Blocks on player specific position
+    \begin{itemize}
+      \item dispenser pos is fixed, player pos is dependent on board position
+      \item jump between base and wolrd coordinate system
+    \end{itemize}
+    \item implement interface
+    \begin{itemize}
+      \item player can pick position for block to be placed by robot (human never touches anything, other than the control terminal)
+      \item implement gravity off and on options
+      \begin{itemize}
+        \item gravity off: Blocks can be placed anywhere on the board
+        \item gravity on: Blocks can only be placed on the lowest free position of any column
+      \end{itemize}
+    \end{itemize}
+    \item Human vs Human 
+    \item 
+  \end{enumerate}
+\end{document}
