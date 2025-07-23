@@ -1,0 +1,23 @@
+\documentclass{article}
+\newcommand{\DOCTITLE}{}
+\input{../libs/commands.tex}
+\input{../libs/packages.tex}
+\begin{document}
+    \makeHeader\newpage
+    \tableofcontents
+    \newpage
+    \section{Set-up and operating instructions}
+        The dispenser needs to be position so that the front of the dispenser is facing outside the front of the KUKA box. It needs to be positioned precisely so that the front clamp can be positioned at B9 and the back clamp can be positioned at B13. This is relevant since picking the blocks from the dispenser uses measured positions.
+        
+        The playing field can be positioned anywhere the robot can reach all cells on the field. Our test runs have been mainly using the points G3 and O3 as ankers. Should the field be moved to another position please keep in mind to adjust the taught base, \#17 by retraining the base with the three point method. 
+
+        For the robots procedural setup of the game the user will have to continuously refill the dispenser by hand. This is because the player storage areas hold twelve blocks each, the dispenser only seven at maximum.
+
+        Once the game is set up the user will be asked to choose a gravity mode out of the options of ´gravity on' and ´gravity off'. Gravity on will mean that poth players will only be able to pick the bottom most cell of each column that is not already occupied by a piece. Gravity off will mean that both players can pick any unoccupied cell on the entire game area.
+
+        The user will now be asked to pick a gamemode out of the options ´PvP' (player vs player), ´PvR' (player vs robot) and ´RvR' (robot vs robot). 
+        
+        PvP\@: Two external players play against each other using the robot interface, which will ask for a move input at the start of each turn. 
+        
+        PvR\@: One player will be external, the other player will be played by the machine. At start of each of the external players turns the interface will ask for move input and subesequently make it's own prefered move. The starting player is chosen randomly. 
+\end{document}
