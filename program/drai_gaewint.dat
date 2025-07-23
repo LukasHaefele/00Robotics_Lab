@@ -1,0 +1,6 @@
+&ACCESS RVP
+&PARAM EDITMASK = *
+&PARAM TEMPLATE = C:\KRC\Roboter\Template\ExpertVorgabe
+DEFDAT drai_gaewint PUBLIC
+
+ENDDAT

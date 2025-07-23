@@ -1,0 +1,102 @@
+&ACCESS RV1
+DEF ui_helper (ui_caller:IN)
+   DECL enum_ui_caller ui_caller
+   DECL KRLMSG_T msg
+   DECL KRLMSGDLGSK_T SK[2]
+   DECL KRLMSGDLGSK_T SK_gm[3]
+   DECL KRLMSGDLGSK_T SK_col[6]
+   DECL KRLMSGDLGSK_T SK_row[4]
+   DECL KRLMSGDLGSK_T SK_vic[1]
+   DECL INT slc_mod
+   DECL INT slc_grv
+   DECL INT handle
+   DECL KRLMSGPAR_T par[3]
+   DECL KRLMSGOPT_T opt
+   
+   SWITCH ui_caller
+      CASE #setup
+         msg = {MODUL[] "drai_gaewinnt", NR 1, MSG_TXT[] "Please select gravity setting"}
+         SK[1]={Sk_Type #VALUE, Sk_Txt[] "on"}
+         SK[2]={Sk_Type #VALUE, Sk_Txt[] "off"}
+         handle = SET_KRLDLG(msg, par[], SK[], opt)
+         IF(handle>0)THEN 
+            WHILE(EXISTS_KRLDLG(handle, slc_grv))
+               WAIT SEC 0.1
+            ENDWHILE
+            SWITCH slc_grv
+               CASE 1
+               gravity = TRUE
+               CASE 2
+               gravity = FALSE
+            ENDSWITCH
+         ENDIF
+         msg = {MODUL[] "drai_gaewint", NR 2, MSG_TXT[] "Please select gamemode"}
+         SK_gm[1]={Sk_Type #VALUE, Sk_Txt[] "PvP"}
+         SK_gm[2]={Sk_Type #VALUE, Sk_Txt[] "PvR"}
+         SK_gm[3]={Sk_Type #VALUE, Sk_Txt[] "RvR"}
+         handle = SET_KRLDLG(msg, par[], SK_gm[], opt)
+         IF(handle>0)THEN 
+            WHILE(EXISTS_KRLDLG(handle, slc_mod))
+               WAIT SEC 0.1
+            ENDWHILE
+            SWITCH slc_mod
+               CASE 1
+               gamemode = #pvp
+               CASE 2
+               gamemode = #pve
+               CASE 3
+               gamemode = #eve
+            ENDSWITCH
+         ENDIF
+      CASE #place
+         msg = {MODUL[] "drai_gaewint", NR 3, MSG_TXT[] "Please select Collumn"}
+         SK_col[1]={Sk_Type #VALUE, Sk_Txt[] "1"}
+         SK_col[2]={Sk_Type #VALUE, Sk_Txt[] "2"}
+         SK_col[3]={Sk_Type #VALUE, Sk_Txt[] "3"}
+         SK_col[4]={Sk_Type #VALUE, Sk_Txt[] "4"}
+         SK_col[5]={Sk_Type #VALUE, Sk_Txt[] "5"}
+         SK_col[6]={Sk_Type #VALUE, Sk_Txt[] "6"}
+         handle = SET_KRLDLG(msg, par[], SK_col[], opt)
+         IF(handle>0)THEN
+            WHILE(EXISTS_KRLDLG(handle, slc_grv))
+               WAIT SEC 0.1
+            ENDWHILE
+            next_field.x = slc_grv
+         ENDIF
+         IF gravity THEN
+            next_field.y = 1
+         ELSE
+            msg = {MODUL[] "drai_gaewint", NR 4, MSG_TXT[] "Please select Row"}
+            SK_row[1]={Sk_Type #VALUE, Sk_Txt[] "A"}
+            SK_row[2]={Sk_Type #VALUE, Sk_Txt[] "B"}
+            SK_row[3]={Sk_Type #VALUE, Sk_Txt[] "C"}
+            SK_row[4]={Sk_Type #VALUE, Sk_Txt[] "D"}
+            handle = SET_KRLDLG(msg, par[], SK_row[], opt)
+            IF(handle>0)THEN
+               WHILE(EXISTS_KRLDLG(handle, slc_grv))
+                  WAIT SEC 0.1
+               ENDWHILE
+               next_field.y = slc_grv
+            ENDIF
+         ENDIF
+      CASE #victory
+         SWITCH active_player
+            CASE #free
+               msg = {MODUL[] "drai_gaewint", NR 7, MSG_TXT[] "You fucked up and told me someone won without telling me who won!"}
+               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "Fuck!"}
+            CASE #p1
+               msg = {MODUL[] "drai_gaewint", NR 5, MSG_TXT[] "Big surprise, the starting player won!"}
+               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "happyFace"}
+            CASE #p2
+               msg = {MODUL[] "drai_gaewint", NR 6, MSG_TXT[] "Wow... Congrats to player 1! It is actually a skill to lose in this game!"}
+               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "SadFace"}
+         ENDSWITCH
+      
+         handle = SET_KRLDLG(msg, par[], SK_vic[], opt)
+         IF(handle>0)THEN
+            WHILE(EXISTS_KRLDLG(handle, slc_grv))
+               WAIT SEC 0.1
+            ENDWHILE
+         ENDIF
+   ENDSWITCH
+END

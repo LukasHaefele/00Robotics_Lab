@@ -1,0 +1,6 @@
+&ACCESS RV1
+&PARAM EDITMASK = *
+&PARAM TEMPLATE = C:\KRC\Roboter\Template\ExpertVorgabe
+DEFDAT calc_positions PUBLIC
+
+ENDDAT

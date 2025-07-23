@@ -1,0 +1,66 @@
+&ACCESS RV1
+DEF check_game_over (grid[,]:OUT, result:OUT, coords:OUT)
+   DECL FIELD grid[,]
+   DECL enum_player result
+   DECL FIELD_COORDINATES coords
+   DECL INT i, j
+
+   result = #free
+
+   ; Check horizontal triplets
+   FOR i = 1 TO 6
+      FOR j = 1 TO 2
+         IF (grid[i,j].player == grid[i,j+1].player) AND (grid[i,j].player == grid[i,j+2].player) THEN
+            SWITCH grid[i,j].player
+               CASE #free
+               DEFAULT
+                  result = grid[i,j].player
+                  RETURN
+            ENDSWITCH
+         ENDIF
+      ENDFOR
+   ENDFOR
+
+   ; Check vertical triplets
+   FOR i = 1 TO 4
+      FOR j = 1 TO 4
+         IF (grid[i,j].player == grid[i+1,j].player) AND (grid[i,j].player == grid[i+2,j].player) THEN
+            SWITCH grid[i,j].player
+               CASE #free
+               DEFAULT
+                  result = grid[i,j].player
+                  RETURN
+            ENDSWITCH  
+         ENDIF
+      ENDFOR
+   ENDFOR
+
+   ; Check diagonal (down-right) triplets
+   FOR i = 1 TO 4
+      FOR j = 1 TO 2
+         IF (grid[i,j].player == grid[i+1,j+1].player) AND (grid[i,j].player == grid[i+2,j+2].player) THEN
+            SWITCH grid[i,j].player
+               CASE #free
+               DEFAULT
+                  result = grid[i,j].player
+                  RETURN
+            ENDSWITCH  
+         ENDIF
+      ENDFOR
+   ENDFOR
+
+   ; Check diagonal (up-right) triplets
+   FOR i = 3 TO 6
+      FOR j = 1 TO 2
+         IF (grid[i,j].player == grid[i-1,j+1].player) AND (grid[i,j].player == grid[i-2,j+2].player) THEN
+            SWITCH grid[i,j].player
+               CASE #free
+               DEFAULT
+                  result = grid[i,j].player
+                  RETURN
+            ENDSWITCH  
+         ENDIF
+      ENDFOR
+   ENDFOR
+
+END

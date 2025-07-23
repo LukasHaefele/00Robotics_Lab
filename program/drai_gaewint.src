@@ -1,0 +1,86 @@
+&ACCESS RVP
+&PARAM EDITMASK = *
+&PARAM TEMPLATE = C:\KRC\Roboter\Template\ExpertVorgabe
+DEF drai_gaewint( )
+   ;FOLD declare and initialize variables
+   DECL FRAME storage_player_1[12]
+   DECL FRAME storage_player_2[12]
+   DECL FIELD game_field[6,4]
+   DECL INT i
+   DECL INT j
+   DECL BOOL f_off
+   DECL BOOL game_over
+   DECL enum_player victor 
+   calc_positions(storage_player_1[], storage_player_2[], game_field[,])
+   game_over = FALSE
+   f_off = FALSE
+   turn_count = 0
+   active_player = #p1
+   ;ENDFOLD
+   
+   ;FOLD PTP HOME  Vel= 50 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
+   $BWDSTART = FALSE
+   PDAT_ACT=PDEFAULT
+   FDAT_ACT=FHOME
+   BAS (#PTP_PARAMS,100 )
+   $H_POS=XHOME
+   PTP  XHOME
+   ;ENDFOLD
+   ;FOLD initial UI
+   ui_helper(#setup)
+   ;ENDFOLD
+   ;FOLD move to game field
+   SPTP PlayingFieldDefault WITH $VEL_AXIS[1]= SVEL_JOINT( 100), $TOOL= STOOL2( FPPFD), $BASE= SBASE( FPPFD.BASE_NO),$IPO_MODE= SIPO_MODE( FPPFD.IPO_FRAME), $LOAD= SLOAD( FPPFD.TOOL_NO), $ACC_AXIS[1]= SACC_JOINT( PPDATPFD), $GEAR_JERK[1]= SGEAR_JERK( PPDATPFD)
+   ;ENDFOLD
+   
+   ;FOLD initial setup
+   ;setup_blocks(storage_player_1[], storage_player_2[])
+   ;ENDFOLD
+   
+   ;FOLD Player_turn
+   WHILE(NOT game_over)
+      f_off = FALSE
+      WHILE(NOT f_off)
+         ui_helper(#place)
+         SWITCH game_field[next_field.x,next_field.y].player
+            CASE #free
+               f_off = TRUE
+            DEFAULT
+         ENDSWITCH
+      ENDWHILE
+      calc_block_placement(game_field[,])
+      SWITCH active_player
+         CASE #p1
+            pick_from_playingfield(storage_player_1[turn_count/2 + 1])
+         CASE #p2
+            pick_from_playingfield(storage_player_2[turn_count/2 + 1])
+         CASE #free
+      ENDSWITCH
+      place_on_playingfield(game_field[next_field.x,next_field.y].position)
+      game_field[next_field.x,next_field.y].player = active_player
+      check_game_over(game_field[,], victor)
+      SWITCH victor
+         CASE #free
+            SWITCH active_player
+               CASE #p1
+                  active_player = #p2
+               CASE #p2
+                  active_player = #p1
+               DEFAULT
+                  
+            ENDSWITCH
+         DEFAULT
+            game_over = TRUE
+      ENDSWITCH
+      
+      
+   ENDWHILE
+   ;ENDFOLD
+   
+   ;FOLD victory
+   ui_helper(#victory)
+   ;ENDFOLD
+   ; clean up the blocks
+   
+END
+

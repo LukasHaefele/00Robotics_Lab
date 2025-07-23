@@ -1,0 +1,55 @@
+&ACCESS RV1
+&PARAM EDITMASK = *
+&PARAM TEMPLATE = C:\KRC\Roboter\Template\ExpertVorgabe
+DEF calc_positions(positions_p1[]:OUT, positions_p2[]:OUT, positions_gf[,]:OUT)
+   DECL FRAME positions_p1[]   ; array with positions of all Player 1 storage spots
+   DECL FRAME positions_p2[]   ; array with positions of all Player 2 storage spots
+   DECL FIELD positions_gf[,]
+   
+   ; calculate player_area positions
+   DECL INT row      ; take a guess
+   DECL INT col
+   
+   DECL REAL step_y     ; step size to next square
+   DECL REAL step_x     
+   DECL REAL offset_p2  ; Difference between Player 1 and Player 2 storage area
+   DECL REAL help
+   
+   DECL FRAME point              ; helper for calculation ease
+   DECL FIELD buffer
+   
+   
+   buffer.player = #free
+   step_x = 31.5
+   step_y = 47.0
+   offset_p2 = 204.0
+   
+   for row = 1 to 2 step 1
+      for col = 1 to 6 step 1
+         point.X = (col - 1) * step_x
+         point.Y = (row - 1) * step_y
+         point.A = 0.0
+         positions_p1[(row - 1) * 6 + col] = point
+         point.X = point.X + offset_p2
+         point.A = 180.0
+         positions_p2[(row - 1) * 6 + col] = point
+      endfor
+   endfor
+   
+   help = step_x
+   step_x = step_y
+   step_y = help
+
+   for row = 1 to 4 step 1
+      for col = 1 to 6 step 1
+         point.X = PFA1.X + (col - 1) * step_x
+         point.Y = PFA1.Y - (row - 1) * step_y
+         point.A = PFA1.A
+         point.B = PFA1.B
+         point.C = PFA1.C
+         buffer.position = point
+         positions_gf[col,row] = buffer
+      endfor
+   endfor
+   
+END

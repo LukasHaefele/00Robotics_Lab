@@ -1,0 +1,25 @@
+&ACCESS RV1
+&PARAM EDITMASK = *
+&PARAM TEMPLATE = C:\KRC\Roboter\Template\ExpertVorgabe
+DEF setup_blocks(storage_player_1[]:OUT, storage_player_2[]:OUT)
+   ;FOLD declare variables
+   DECL FRAME storage_player_1[]
+   DECL FRAME storage_player_2[]
+   
+   DECL INT increment_counter
+   ;ENDFOLD
+   ;place blocks in player storage
+   ;FOLD set player one
+   FOR increment_counter = 1 TO 12 STEP 1
+      pick_block()
+      place_on_playingfield(storage_player_1[increment_counter])
+   ENDFOR
+   ;ENDFOLD
+   ;FOLD set player two
+   FOR increment_counter = 1 TO 12 STEP 1
+      pick_block()
+      place_on_playingfield(storage_player_2[increment_counter])
+   ENDFOR
+   ;ENDFOLD
+
+END

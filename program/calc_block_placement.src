@@ -1,0 +1,16 @@
+&ACCESS RV1
+DEF calc_block_placement (playing_field[,]:OUT)
+   DECL FIELD playing_field[,]
+   DECL INT i
+   
+   IF gravity THEN
+      FOR i = 1 TO 4 STEP 1
+         SWITCH playing_field[next_field.x,5-i].player
+            CASE #free
+               next_field.y = 5-i
+               RETURN
+            CASE #p1, #p2
+         ENDSWITCH
+      ENDFOR
+   ENDIF
+END
