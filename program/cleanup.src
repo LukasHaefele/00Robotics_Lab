@@ -1,0 +1,29 @@
+&ACCESS RV1
+DEF cleanup (playing_field[,]:OUT, storage_p1[]:OUT, storage_p2[]:OUT)
+   DECL FIELD playing_field[,]
+   DECL FRAME storage_p1[]
+   DECL FRAME storage_p2[]
+   DECL INT i
+   DECL INT j
+   DECL INT p1
+   DECL INT p2
+   
+   p1 = 1
+   p2 = 1
+   
+   FOR i = 1 TO 6 STEP 1
+      FOR j = 1 TO 4 STEP 1
+         SWITCH playing_field[i,j].player 
+            CASE #p1
+               pick_from_playingfield(playing_field[i,j].position)
+               place_on_playingfield(storage_p1[p1])
+               p1 = p1 + 1
+            CASE #p2 
+               pick_from_playingfield(playing_field[i,j].position)
+               place_on_playingfield(storage_p2[p2])
+               p2 = p2 + 1
+            CASE #free
+         ENDSWITCH
+      ENDFOR
+   ENDFOR
+END

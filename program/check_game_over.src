@@ -1,8 +1,7 @@
 &ACCESS RV1
-DEF check_game_over (grid[,]:OUT, result:OUT, coords:OUT)
+DEF check_game_over (grid[,]:OUT, result:OUT)
    DECL FIELD grid[,]
    DECL enum_player result
-   DECL FIELD_COORDINATES coords
    DECL INT i, j
 
    result = #free

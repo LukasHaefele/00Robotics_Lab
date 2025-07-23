@@ -6,8 +6,8 @@ DEF drai_gaewint( )
    DECL FRAME storage_player_1[12]
    DECL FRAME storage_player_2[12]
    DECL FIELD game_field[6,4]
-   DECL INT i
-   DECL INT j
+   DECL INT random
+   DECL FIELD_COORDINATES ai_next_move
    DECL BOOL f_off
    DECL BOOL game_over
    DECL enum_player victor 
@@ -15,7 +15,7 @@ DEF drai_gaewint( )
    game_over = FALSE
    f_off = FALSE
    turn_count = 0
-   active_player = #p1
+   active_player = 1
    ;ENDFOLD
    
    ;FOLD PTP HOME  Vel= 50 % DEFAULT;%{PE}%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:HOME, 3:, 5:100, 7:DEFAULT
@@ -26,53 +26,88 @@ DEF drai_gaewint( )
    $H_POS=XHOME
    PTP  XHOME
    ;ENDFOLD
-   ;FOLD initial UI
-   ui_helper(#setup)
-   ;ENDFOLD
+   
    ;FOLD move to game field
    SPTP PlayingFieldDefault WITH $VEL_AXIS[1]= SVEL_JOINT( 100), $TOOL= STOOL2( FPPFD), $BASE= SBASE( FPPFD.BASE_NO),$IPO_MODE= SIPO_MODE( FPPFD.IPO_FRAME), $LOAD= SLOAD( FPPFD.TOOL_NO), $ACC_AXIS[1]= SACC_JOINT( PPDATPFD), $GEAR_JERK[1]= SGEAR_JERK( PPDATPFD)
    ;ENDFOLD
    
    ;FOLD initial setup
-   ;setup_blocks(storage_player_1[], storage_player_2[])
+   setup_blocks(storage_player_1[], storage_player_2[])
+   ;ENDFOLD
+   
+   ;FOLD initial UI
+   ui_helper(#setup)
+   ;ENDFOLD
+   
+   ;FOLD parse gamemode
+   SWITCH gamemode
+      CASE #pvp
+         players[1] = {p #p1, type #human}
+         players[2] = {p #p2, type #human}
+      CASE #pve
+         RandomInt(0, 1, random)
+         IF(random == 0)THEN
+            players[1] = {p #p1, type #ai}
+            players[2] = {p #p2, type #human}
+         ELSE
+            players[1] = {p #p1, type #human}
+            players[2] = {p #p2, type #ai}
+         ENDIF
+      CASE #eve
+         players[1] = {p #p1, type #ai}
+         players[2] = {p #p2, type #ai}
+      DEFAULT
+         players[1] = {p #free, type #unset}
+         players[2] = {p #free, type #unset}
+         
+   ENDSWITCH
    ;ENDFOLD
    
    ;FOLD Player_turn
    WHILE(NOT game_over)
       f_off = FALSE
       WHILE(NOT f_off)
-         ui_helper(#place)
-         SWITCH game_field[next_field.x,next_field.y].player
-            CASE #free
+         SWITCH players[active_player].type
+            CASE #ai
+               get_best_move(game_field[,], ai_next_move, players[active_player].p)
+               next_field = ai_next_move
                f_off = TRUE
-            DEFAULT
+            CASE #human
+               ui_helper(#place)
+               SWITCH game_field[next_field.x,next_field.y].player
+                  CASE #free
+                     f_off = TRUE
+                  DEFAULT
+               ENDSWITCH
          ENDSWITCH
       ENDWHILE
       calc_block_placement(game_field[,])
       SWITCH active_player
-         CASE #p1
+         CASE 1
             pick_from_playingfield(storage_player_1[turn_count/2 + 1])
-         CASE #p2
+         CASE 2
             pick_from_playingfield(storage_player_2[turn_count/2 + 1])
-         CASE #free
       ENDSWITCH
       place_on_playingfield(game_field[next_field.x,next_field.y].position)
-      game_field[next_field.x,next_field.y].player = active_player
+      game_field[next_field.x,next_field.y].player = players[active_player].p
       check_game_over(game_field[,], victor)
       SWITCH victor
          CASE #free
             SWITCH active_player
-               CASE #p1
-                  active_player = #p2
-               CASE #p2
-                  active_player = #p1
+               CASE 1
+                  active_player = 2
+               CASE 2
+                  active_player = 1
                DEFAULT
                   
             ENDSWITCH
          DEFAULT
             game_over = TRUE
       ENDSWITCH
-      
+      turn_count = turn_count + 1
+      IF (turn_count == 24) THEN
+         game_over = TRUE
+      ENDIF
       
    ENDWHILE
    ;ENDFOLD
@@ -80,7 +115,25 @@ DEF drai_gaewint( )
    ;FOLD victory
    ui_helper(#victory)
    ;ENDFOLD
-   ; clean up the blocks
    
+   ;FOLD cleanup blocks
+   cleanup(game_field[,], storage_player_1[], storage_player_2[])
+   ;ENDFOLD
+   
+   ;FOLD move to game field
+   SPTP PlayingFieldDefault WITH $VEL_AXIS[1]= SVEL_JOINT( 100), $TOOL= STOOL2( FPPFD), $BASE= SBASE( FPPFD.BASE_NO),$IPO_MODE= SIPO_MODE( FPPFD.IPO_FRAME), $LOAD= SLOAD( FPPFD.TOOL_NO), $ACC_AXIS[1]= SACC_JOINT( PPDATPFD), $GEAR_JERK[1]= SGEAR_JERK( PPDATPFD)
+   ;ENDFOLD
+   
+END
+
+DEF RandomInt(min:IN, max:IN, random:OUT)
+   DECL INT min
+   DECL INT max
+   DECL INT random
+   DECL STATE_T state
+   DECL MODUS_T mode
+   random = 0
+   
+   CWrite ($FCT_CALL, state, mode, "krl_getRandom", random, min, max)
 END
 

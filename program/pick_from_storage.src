@@ -1,8 +1,8 @@
-&ACCESS RVO
+&ACCESS RVO1
 &REL 15
 &PARAM EDITMASK = *
 &PARAM TEMPLATE = C:\KRC\Roboter\Template\vorgabe
-DEF pick_block( )
+DEF pick_from_storage( )
 ;FOLD INI;%{PE}
   ;FOLD BASISTECH INI
     GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )

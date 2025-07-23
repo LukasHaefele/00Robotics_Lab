@@ -11,13 +11,13 @@ DEF setup_blocks(storage_player_1[]:OUT, storage_player_2[]:OUT)
    ;place blocks in player storage
    ;FOLD set player one
    FOR increment_counter = 1 TO 12 STEP 1
-      pick_block()
+      pick_from_storage()
       place_on_playingfield(storage_player_1[increment_counter])
    ENDFOR
    ;ENDFOLD
    ;FOLD set player two
    FOR increment_counter = 1 TO 12 STEP 1
-      pick_block()
+      pick_from_storage()
       place_on_playingfield(storage_player_2[increment_counter])
    ENDFOR
    ;ENDFOLD

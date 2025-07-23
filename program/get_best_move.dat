@@ -1,0 +1,4 @@
+&ACCESS RV1
+DEFDAT  get_best_move PUBLIC
+
+ENDDAT

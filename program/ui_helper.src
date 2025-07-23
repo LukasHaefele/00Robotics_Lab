@@ -81,15 +81,15 @@ DEF ui_helper (ui_caller:IN)
          ENDIF
       CASE #victory
          SWITCH active_player
-            CASE #free
-               msg = {MODUL[] "drai_gaewint", NR 7, MSG_TXT[] "You fucked up and told me someone won without telling me who won!"}
-               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "Fuck!"}
-            CASE #p1
-               msg = {MODUL[] "drai_gaewint", NR 5, MSG_TXT[] "Big surprise, the starting player won!"}
-               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "happyFace"}
-            CASE #p2
-               msg = {MODUL[] "drai_gaewint", NR 6, MSG_TXT[] "Wow... Congrats to player 1! It is actually a skill to lose in this game!"}
-               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "SadFace"}
+            CASE 0
+               msg = {MODUL[] "drai_gaewint", NR 7, MSG_TXT[] "Unentschieden"}
+               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "How?"}
+            CASE 1
+               msg = {MODUL[] "drai_gaewint", NR 5, MSG_TXT[] "Spieler 1 gewinnt"}
+               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "Cool"}
+            CASE 2
+               msg = {MODUL[] "drai_gaewint", NR 6, MSG_TXT[] "Spieler 2 gewinnt"}
+               SK_vic[1]={Sk_Type #VALUE, Sk_Txt[] "Cool"}
          ENDSWITCH
       
          handle = SET_KRLDLG(msg, par[], SK_vic[], opt)

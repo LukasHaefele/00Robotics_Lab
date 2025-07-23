@@ -1,0 +1,238 @@
+&ACCESS RV1
+DEF get_best_move (board[,]:OUT, bestMove:OUT, player:IN)
+   ;FOLD AI Move
+   DECL FIELD board[,]
+   DECL FIELD_COORDINATES bestMove
+   DECL INT col, row, col_, row_
+   DECL FIELD tempBoard[6,4]
+   DECL BOOL playable[6,4], playable_[6,4]
+   DECL enum_player player, pot_vic
+   DECL BOOL is_win, is_improvement
+   DECL REAL best_score, temp_score
+   best_score = 0
+   
+   IF (turn_count == 0) THEN
+      bestMove.x = 3
+      bestMove.y = 3
+      RETURN
+   ENDIF
+   
+   IF (turn_count == 1) AND gravity THEN
+      IF (board[3,4].player == #p1) THEN
+         bestMove.x = 4
+         RETURN
+      ENDIF
+      bestMove.x = 3
+      RETURN
+   ENDIF
+   
+   IF (turn_count == 2) AND NOT gravity THEN
+      IF (board[2,3].player == #free) AND (board[4,3].player == #free) THEN 
+         IF (board[5,3].player == #free) THEN 
+            bestMove.x = 4
+            bestMove.y = 3
+            RETURN
+         ELSE 
+            bestMove.x = 2
+            bestMove.y = 3
+            RETURN
+         ENDIF
+      ELSE 
+         bestMove.x = 3
+         bestMove.y = 2
+         RETURN
+      ENDIF
+   ENDIF
+   
+   copy_board(board[,], tempBoard[,])
+   get_available_moves(tempBoard[,], playable[,], gravity)
+   FOR col = 1 TO 6 STEP 1
+      FOR row = 1 TO 4 STEP 1
+         copy_board(board[,], tempBoard[,])
+         IF playable[col,row] THEN
+            tempBoard[col,row].player = player
+            check_game_over(tempBoard[,], pot_vic)
+            is_win = (pot_vic == player)
+            IF is_win THEN
+               bestMove.x = col
+               bestMove.y = row
+               best_score = 3
+               RETURN
+            ENDIF
+            SWITCH player
+               CASE #p1
+                  tempBoard[col,row].player = #p2
+                  check_game_over(tempBoard[,], pot_vic)
+                  is_win = (pot_vic == #p2)
+               CASE #p2
+                  tempBoard[col,row].player = #p1
+                  check_game_over(tempBoard[,], pot_vic)
+                  is_win = (pot_vic == #p1)
+            ENDSWITCH
+            IF (is_win AND (best_score < 3)) THEN
+               bestMove.x = col
+               bestMove.y = row
+               best_score = 2
+            ENDIF
+            tempBoard[col,row].player = player
+            get_available_moves(tempBoard[,], playable_[,], FALSE)
+            is_improvement = FALSE
+            temp_score = 0
+            FOR col_ = 1 TO 6 STEP 1
+               FOR row_ = 1 TO 4 STEP 1
+                  IF playable_[col_,row_] AND (best_score < 2) THEN
+                     SWITCH player
+                        CASE #p1
+                           tempBoard[col_,row_].player = #p2
+                           check_game_over(tempBoard[,], pot_vic)
+                           is_win = (pot_vic == #p2)
+                        CASE #p2
+                           tempBoard[col_,row_].player = #p1
+                           check_game_over(tempBoard[,], pot_vic)
+                           is_win = (pot_vic == #p1)
+                     ENDSWITCH
+                     IF is_win THEN
+                        is_improvement = FALSE
+                        col_ = 6
+                        row_ = 4
+                        EXIT
+                     ENDIF
+                     tempBoard[col_,row_].player = player
+                     check_game_over(tempBoard[,], pot_vic)
+                     is_win = (pot_vic == player)
+                     tempBoard[col_,row_].player = #free
+                     IF is_win THEN 
+                        IF (row_ < 4) THEN
+                           IF (NOT (tempBoard[col_,row_+1].player == #free)) THEN
+                              is_improvement = TRUE
+                              temp_score = 1
+                           ELSE
+                              IF (best_score < 1) AND (temp_score < 1) THEN
+                                 is_improvement = TRUE
+                                 temp_score = 0.5
+                              ENDIF
+                           ENDIF
+                        ELSE 
+                           is_improvement = TRUE
+                           temp_score = 1
+                        ENDIF
+                     ENDIF
+                  ENDIF
+               ENDFOR
+            ENDFOR
+            
+            IF is_improvement THEN
+               bestMove.x = col
+               bestMove.y = row
+               best_score = temp_score
+            ELSE
+               IF (best_score < 0.5) THEN
+                  bestMove.x = col
+                  bestMove.y = row
+               ENDIF
+            ENDIF
+         ENDIF
+      ENDFOR
+   ENDFOR
+   ;ENDFOLD
+END
+
+
+; Checks if the column has empty space to play
+DEF get_available_moves (board[,]:OUT, playable[,]:OUT, grav:IN)
+   ;FOLD is column playable
+   DECL FIELD board[,]
+   DECL INT col
+   DECL INT row
+   DECL BOOL playable[,]
+   DECL BOOL grav
+   
+   FOR col = 1 TO 6 STEP 1
+      FOR row = 1 TO 4 STEP 1
+         playable[col,row] = FALSE
+      ENDFOR
+   ENDFOR
+   
+   FOR col = 1 TO 6 STEP 1
+      FOR row = 0 TO 3 STEP 1
+         SWITCH board[col,4-row].player 
+            CASE #free
+               playable[col,4-row] = TRUE 
+               IF grav THEN 
+                  EXIT
+               ENDIF
+            DEFAULT 
+         ENDSWITCH
+      ENDFOR
+   ENDFOR
+   ;ENDFOLD
+END
+
+
+; Copies board array
+DEF copy_board (src[,]:OUT, dst[,]:OUT)
+   ;FOLD Copy Board
+   DECL FIELD src[,]
+   DECL FIELD dst[,]
+   DECL INT i, j
+   FOR i = 1 TO 6
+      FOR j = 1 TO 4
+         dst[i,j] = src[i,j]
+      ENDFOR
+   ENDFOR
+   ;ENDFOLD
+END
+
+
+; Checks if player has a winning 3 in a row on the board
+DEF check_win (board[,]:OUT, player:IN, is_win:OUT)
+   ;FOLD check win
+   DECL FIELD board[,]
+   DECL enum_player player
+   DECL INT i, j
+   DECL BOOL is_win
+   
+   is_win = FALSE
+   
+   ; Horizontal
+   FOR i = 1 TO 6
+      FOR j = 1 TO 2
+         IF (board[i,j].player == player) AND (board[i,j+1].player == player) AND (board[i,j+2].player == player) THEN
+            is_win = TRUE
+            RETURN
+         ENDIF
+      ENDFOR
+   ENDFOR
+
+   ; Vertical
+   FOR i = 1 TO 4
+      FOR j = 1 TO 4
+        IF (board[i,j].player == player) AND (board[i+1,j].player == player) AND (board[i+2,j].player == player) THEN
+           is_win = TRUE
+           RETURN
+        ENDIF
+      ENDFOR
+   ENDFOR
+
+   ; Diagonal down-right
+   FOR i = 1 TO 4
+      FOR j = 1 TO 2
+         IF (board[i,j].player == player) AND (board[i+1,j+1].player == player) AND (board[i+2,j+2].player == player) THEN
+            is_win = TRUE
+            RETURN
+         ENDIF
+      ENDFOR
+   ENDFOR
+
+   ; Diagonal up-right
+   FOR i = 3 TO 6
+      FOR j = 1 TO 2
+         IF (board[i,j].player == player) AND (board[i-1,j+1].player == player) AND (board[i-2,j+2].player == player) THEN
+            is_win = TRUE
+            RETURN
+         ENDIF
+      ENDFOR
+   ENDFOR
+   ;ENDFOLD
+END
+
