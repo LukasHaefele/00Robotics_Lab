@@ -9,23 +9,25 @@
     \newpage
     \pagenumbering{arabic} % Start page numbering from here
     \section{Set-up and operating instructions}
-        The dispenser needs to be position so that the front of the dispenser is facing outside the front of the KUKA box. It needs to be positioned precisely so that the front clamp can be positioned at B9 and the back clamp can be positioned at B13. This is relevant since picking the blocks from the dispenser uses measured positions.
+        The dispenser needs to be positioned so that the front of the dispenser is facing outside the front of the KUKA box. It needs to be positioned precisely so that the front clamp can be positioned at B9 and the back clamp can be positioned at B13. This is relevant since picking the blocks from the dispenser uses measured positions.
         
         The playing field can be positioned anywhere the robot can reach all cells on the field. Our test runs have been mainly using the points G3 and O3 as ankers. Should the field be moved to another position please keep in mind to adjust the taught base, \#17 by retraining the base with the three point method. 
 
-        For the robots procedural setup of the game the user will have to continuously refill the dispenser by hand. This is because the player storage areas hold twelve blocks each, the dispenser only seven at maximum.
+        For the robots procedural setup of the game the user will have to continuously refill the dispenser by hand. This is because the player storage areas hold twelve blocks each, the dispenser only seven at maximum. First the storage of player 1 is filled with all 12 blocks, the storage of player 2 will be filled accordingly.
 
-        Once the game is set up the user will be asked to choose a gravity mode out of the options of `gravity on' and `gravity off'. Gravity on will mean that poth players will only be able to pick the bottom most cell of each column that is not already occupied by a piece. Gravity off will mean that both players can pick any unoccupied cell on the entire game area.
+        Once the game is set up the user will be asked to choose a gravity mode out of the options of `gravity on' and `gravity off'. Gravity on will mean that both players will only be able to pick the bottom most cell of each column that is not already occupied by a piece. Gravity off will mean that both players can pick any unoccupied cell on the entire game area.
 
-        The user will now be asked to pick a gamemode out of the options `PvP' (player vs player), `PvR' (player vs robot) and `RvR' (robot vs robot). 
+        The user will now be asked to pick a gamemode out of the options `PvP' (player vs player), `PvR' (player vs robot) and `RvR' (robot vs robot). In case PvR is played, the starting player has to be chosen as well.
+
         
         PvP\@: Two external players play against each other using the robot interface, which will ask for a move input at the start of each turn. 
         
-        PvR\@: One player will be external, the other player will be played by the machine. At start of each of the external players turns the interface will ask for move input and subesequently make it's own prefered move. The starting player is chosen randomly.
+        PvR\@: One player will be external, the other player will be played by the machine. At start of each of the external players turns the interface will ask for move input and subesequently make it's own prefered move.
         
         RvR\@: The robot will play against itself. The interface will not ask for any input and the game will run until one of the players has won or the game has ended in a draw.
 
         Finally, once either player has won or the turn count has reached 24 turns the game will end and in infomessage will be shown which the user will have to confirm. Upon confirmation the robot will clean up the game are by picking up the blocks from the game area and placing them back into the player storage. The dispenser will remain empty.
+        The game can be reset by turning switch 1 to the right. After the current move is completed, the cleanup process will be started and the programm will terminate. Restarting the game without restarting the programm is not possible.
 
         At the start of each turn the interface will ask for a move input. This happens by the user first being prompted to select a column between 1 and 6 and then if gravity is off, a row between A and D. If gravity is on the prompt for the row will be skipped and the robot will automatically place the block in the lowest unoccupied cell of the selected column.
         \newpage
@@ -123,7 +125,7 @@
     \section{Suggestions for further development}
         The major pain point of the current implementation is that the robot is unable to calculate certain movements towards specific positions on the playing field, although they are reachable by manual input. Because of this the robot is unable to move to Cell 3A because it attempts to move there by rotating axis 5 and 6 instead of 2 and 3 in order to reach the position. 
 
-        Other than this the main thing we would do if we had more time would be refactoring the code to  improve readability. This would happen mainly by extracting many sub functionalities to external functions within the same module, like in the drai\_gaewint.src file. 
+        Other than this the main thing we would do if we had more time is refactoring the code to  improve readability and remove redundancy. This would happen mainly by extracting many sub functionalities to external functions within the same module, like in the drai\_gaewint.src file. 
 
         We also defined a new tool since the original tool was not centered correctly around the center of the gripper. This caused rotation around the z axis to be offset slightly. This problem could alternatively be fixed by training two seperate base coordinate systems, one for the game area and one for the storage area.
         
