@@ -9,3 +9,5 @@ pdflatex*
 *.snm
 *.fls
 *.fdb_latexmk
+*.mp4
+*.xml
