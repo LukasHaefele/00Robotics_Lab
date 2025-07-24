@@ -3,9 +3,11 @@
 \input{../libs/commands.tex}
 \input{../libs/packages.tex}
 \begin{document}
+    \pagenumbering{gobble} % Suppress page numbers on title and TOC pages
     \makeHeader\newpage
     \tableofcontents
     \newpage
+    \pagenumbering{arabic} % Start page numbering from here
     \section{Set-up and operating instructions}
         The dispenser needs to be position so that the front of the dispenser is facing outside the front of the KUKA box. It needs to be positioned precisely so that the front clamp can be positioned at B9 and the back clamp can be positioned at B13. This is relevant since picking the blocks from the dispenser uses measured positions.
         
