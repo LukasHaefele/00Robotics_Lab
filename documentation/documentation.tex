@@ -116,6 +116,17 @@
             In the \texttt{\#victory} case, the function displays a message indicating the game result (draw, player 1 wins, or player 2 wins) based on the value of \texttt{active\_player}, and waits for user confirmation before proceeding.
 
             Dialogs are implemented using KUKA's internal dialog functions (\texttt{SET\_KRLDLG}, \texttt{EXISTS\_KRLDLG}), with options and messages tailored to each game phase. The function structure ensures that user input is collected, validated, and stored for use in the robot's game logic. This file is essential for all user interactions required during the game, from initial setup to move selection and end-of-game confirmation.
+
+    \newpage
+    \section{Suggestions for further development}
+        The major pain point of the current implementation is that the robot is unable to calculate certain movements towards specific positions on the playing field, although they are reachable by manual input. Because of this the robot is unable to move to Cell 3A because it attempts to move there by rotating axis 5 and 6 instead of 2 and 3 in order to reach the position. 
+
+        Other than this the main thing we would do if we had more time would be refactoring the code to  improve readability. This would happen mainly by extracting many sub functionalities to external functions within the same module, like in the drai\_gaewint.src file. 
+
+        We also defined a new tool since the original tool was not centered correctly around the center of the gripper. This caused rotation around the z axis to be offset slightly. This problem could alternatively be fixed by training two seperate base coordinate systems, one for the game area and one for the storage area.
+        
+        Lastly, we would like to implement all motions with splines, when we originally did this the robot was for some reason unable to porform some motions, like the one to place a block down on a cell after already positioning above it. 
+
     \newpage
     \section{Flowcharts}
         \begin{figure}[htbp]
