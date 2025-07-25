@@ -27,6 +27,7 @@
         RvR\@: The robot will play against itself. The interface will not ask for any input and the game will run until one of the players has won or the game has ended in a draw.
 
         Finally, once either player has won or the turn count has reached 24 turns the game will end and in infomessage will be shown which the user will have to confirm. Upon confirmation the robot will clean up the game are by picking up the blocks from the game area and placing them back into the player storage. The dispenser will remain empty.
+
         The game can be reset by turning switch 1 to the right. After the current move is completed, the cleanup process will be started and the programm will terminate. Restarting the game without restarting the programm is not possible.
 
         At the start of each turn the interface will ask for a move input. This happens by the user first being prompted to select a column between 1 and 6 and then if gravity is off, a row between A and D. If gravity is on the prompt for the row will be skipped and the robot will automatically place the block in the lowest unoccupied cell of the selected column.
@@ -131,6 +132,12 @@
         
         Lastly, we would like to implement all motions with splines, when we originally did this the robot was for some reason unable to porform some motions, like the one to place a block down on a cell after already positioning above it. 
 
+    \newpage
+
+    \section{Links}
+        \begin{itemize}
+            \item \href{https://drive.google.com/file/d/1ksEsBeFS2djIdrCemAV6TvRpJgihrTrF/view?usp=drivesdk}{Video of the game in action}
+        \end{itemize}
     \newpage
     \section{Flowcharts}
         \begin{figure}[htbp]
